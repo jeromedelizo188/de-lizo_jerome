@@ -43,4 +43,24 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 |
 */
 
-$router->get('/', 'Welcome::index');
+//$router->get('/', 'Welcome::index');
+//$router ->get('/', 'HomeController::landing_page');
+//$router ->get('get-id/{id}/{name}', 'Welcome::get_id');
+//$router ->get('/profile/{fname}/{lname}', 'Welcome::profile');
+
+
+// Landing route
+$router->get('/', 'LandingController::landing');
+$router->get('/landing-page', 'LandingController::landing');
+// Student routes
+$router->get('/students/test', 'StudentsController::test');
+$router->match('/view', 'StudentsController::get_all', 'GET|POST');
+$router->match('/create', 'StudentsController::create','GET|POST');
+$router->match('/update/{student_id}', 'StudentsController::update','GET|POST');
+$router->get('/delete/{student_id}', 'StudentsController::delete');
+// Authentication routes
+$router->match('/signup', 'AuthController::signup', 'GET|POST');
+$router->match('/login', 'AuthController::login', 'GET|POST');
+$router->get('/logout', 'AuthController::logout');
+// User routes
+$router->match('user/dashboard', 'UserController::dashboard', 'GET|POST');
