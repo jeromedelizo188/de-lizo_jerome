@@ -9,8 +9,7 @@ class StudentsController extends Controller
         $this->call->database();
         $this->call->model('StudentsModel');
         $this->call->library('pagination');
-        // Ensure session is loaded if flash messages are used outside AuthController
-        $this->call->library('session'); 
+        $this->call->library('session'); // Ensure session is loaded
     }
 
     function test()
@@ -22,8 +21,9 @@ class StudentsController extends Controller
 
     function get_all()
     {
-        // Check if user is logged in and is admin before proceeding
-        if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
+        // ✅ Check if user is logged in and admin
+        $user = $this->session->userdata('user');
+        if (!$user || $user['user_type'] !== 'admin') {
             redirect('login');
             return;
         }
@@ -45,131 +45,119 @@ class StudentsController extends Controller
     }
 
     function create()
-{
-    // Check if user is logged in and is admin before proceeding
-    if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
-        redirect('login');
-        return;
-    }
-
-    if ($this->form_validation->submitted()) {
-        $student_id = $this->io->post('student_id');
-        $last_name  = $this->io->post('lastname');
-        $first_name = $this->io->post('firstname');
-        $email      = $this->io->post('email');
-        $password   = $this->io->post('password');
-        $confirm    = $this->io->post('confirm_password');
-        $role       = $this->io->post('role') ?? 'user';
-
-        // ✅ Basic validation
-        if ($password !== $confirm) {
-            // FIX: Using session library consistently
-            $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Passwords do not match.']);
-            redirect('create');
-            return;
-        }
-
-        // ✅ Hash password
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-        // ✅ Prepare data for DB
-        $data = array(
-            'student_id' => $student_id,
-            'last_name'  => $last_name,
-            'first_name' => $first_name,
-            'email'      => $email,
-            'password'   => $hashed_password,
-            'user_type'  => $role
-        );
-
-        // ✅ Insert into DB
-        if ($this->StudentsModel->insert($data)) {
-            // FIX: Using session library consistently
-            $this->session->set_flashdata('flash', ['type' => 'success', 'message' => 'User created successfully!']);
-            redirect('view');
-        } else {
-            // FIX: Using session library consistently
-            $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Failed to create user.']);
-            redirect('create');
-        }
-    } else {
-        $this->call->view('create');
-    }
-}
-
-
-    function update($id)
-{
-    // Check if user is logged in and is admin before proceeding
-    if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
-        redirect('login');
-        return;
-    }
-    
-    $user = $this->StudentsModel->find($id);
-
-    if (!$user) {
-        echo "Student not found.";
-        return;
-    }
-
-    if ($this->io->method() == 'post') {
-        $last_name  = $this->io->post('lastname');
-        $first_name = $this->io->post('firstname');
-        $email      = $this->io->post('email');
-        $role       = $this->io->post('role');   // ✅ new
-
-        $password   = $this->io->post('password');
-        $confirm    = $this->io->post('confirm_password');
-
-        // ✅ Build data array
-        $data = array(
-            'last_name'  => $last_name,
-            'first_name' => $first_name,
-            'email'      => $email,
-            'user_type'  => $role   // ✅ save role
-        );
-
-        // ✅ Only update password if provided
-        if (!empty($password)) {
-            if ($password !== $confirm) {
-                // FIX: Using session library consistently
-                $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Passwords do not match.']);
-                $this->call->view('update', ['user' => $user]);
-                return;
-            }
-            $data['password'] = password_hash($password, PASSWORD_BCRYPT);
-        }
-
-        // ✅ Update user
-        if ($this->StudentsModel->update($id, $data)) {
-            // FIX: Using session library consistently
-            $this->session->set_flashdata('flash', ['type' => 'success', 'message' => 'User updated successfully!']);
-            redirect('view');
-        } else {
-            // FIX: Using session library consistently
-            $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Failed to update user.']);
-            $this->call->view('update', ['user' => $user]);
-        }
-
-    } else {
-        $this->call->view('update', ['user' => $user]);
-    }
-}
-
-
-    function delete($id)
     {
-        // Check if user is logged in and is admin before proceeding
-        if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
+        // ✅ Check if user is logged in and admin
+        $user = $this->session->userdata('user');
+        if (!$user || $user['user_type'] !== 'admin') {
             redirect('login');
             return;
         }
-        
+
+        if ($this->form_validation->submitted()) {
+            $student_id = $this->io->post('student_id');
+            $last_name  = $this->io->post('lastname');
+            $first_name = $this->io->post('firstname');
+            $email      = $this->io->post('email');
+            $password   = $this->io->post('password');
+            $confirm    = $this->io->post('confirm_password');
+            $role       = $this->io->post('role') ?? 'user';
+
+            if ($password !== $confirm) {
+                $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Passwords do not match.']);
+                redirect('create');
+                return;
+            }
+
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+            $data = [
+                'student_id' => $student_id,
+                'last_name'  => $last_name,
+                'first_name' => $first_name,
+                'email'      => $email,
+                'password'   => $hashed_password,
+                'user_type'  => $role
+            ];
+
+            if ($this->StudentsModel->insert($data)) {
+                $this->session->set_flashdata('flash', ['type' => 'success', 'message' => 'User created successfully!']);
+                redirect('view');
+            } else {
+                $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Failed to create user.']);
+                redirect('create');
+            }
+        } else {
+            $this->call->view('create');
+        }
+    }
+
+    function update($id)
+    {
+        // ✅ Check if user is logged in and admin
+        $user = $this->session->userdata('user');
+        if (!$user || $user['user_type'] !== 'admin') {
+            redirect('login');
+            return;
+        }
+
+        $student = $this->StudentsModel->find($id);
+
+        if (!$student) {
+            echo "Student not found.";
+            return;
+        }
+
+        if ($this->io->method() == 'post') {
+            $last_name  = $this->io->post('lastname');
+            $first_name = $this->io->post('firstname');
+            $email      = $this->io->post('email');
+            $role       = $this->io->post('role');
+            $password   = $this->io->post('password');
+            $confirm    = $this->io->post('confirm_password');
+
+            $data = [
+                'last_name'  => $last_name,
+                'first_name' => $first_name,
+                'email'      => $email,
+                'user_type'  => $role
+            ];
+
+            if (!empty($password)) {
+                if ($password !== $confirm) {
+                    $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Passwords do not match.']);
+                    $this->call->view('update', ['user' => $student]);
+                    return;
+                }
+                $data['password'] = password_hash($password, PASSWORD_BCRYPT);
+            }
+
+            if ($this->StudentsModel->update($id, $data)) {
+                $this->session->set_flashdata('flash', ['type' => 'success', 'message' => 'User updated successfully!']);
+                redirect('view');
+            } else {
+                $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Failed to update user.']);
+                $this->call->view('update', ['user' => $student]);
+            }
+        } else {
+            $this->call->view('update', ['user' => $student]);
+        }
+
+    }
+    
+
+    function delete($id)
+    {
+        // ✅ Check if user is logged in and admin
+        $user = $this->session->userdata('user');
+        if (!$user || $user['user_type'] !== 'admin') {
+            redirect('login');
+            return;
+        }
+
         if ($this->StudentsModel->delete($id)) {
             redirect('view');
         }
     }
 
 }
-
+?>
