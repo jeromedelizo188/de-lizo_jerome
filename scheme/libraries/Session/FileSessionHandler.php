@@ -77,13 +77,13 @@ class FileSessionHandler extends Session implements SessionHandlerInterface {
      * @param string $session_name
      * @return bool
      */
-    public function open($save_path, $session_name): bool {
+   public function open($save_path, $session_name): bool {
         $this->save_path = $save_path;
         $this->file_path = $this->save_path.DIRECTORY_SEPARATOR.$session_name . '_';
-        if ( !is_dir($this->save_path) ) {
-            mkdir($this->save_path, 0700, TRUE);
-        }
-        return true;
+         if ( !is_dir($this->save_path) ) {
+            @mkdir($this->save_path, 0700, TRUE); // FIX: ADD THE '@' HERE
+    }
+     return true;
     }
 
     /**
