@@ -4,13 +4,15 @@ defined('PREVENT_DIRECT_ACCESS') or exit('No direct script access allowed');
 class StudentsController extends Controller
 {
     public function __construct()
-    {
-        parent::__construct();
-        $this->call->database();
-        $this->call->model('StudentsModel');
-        $this->call->library('pagination');
-        $this->call->library('session'); // Ensure session is loaded
-    }
+{
+    parent::__construct();
+    $this->call->database();
+    $this->call->model('StudentsModel');
+    $this->call->library('pagination');
+    $this->call->library('session'); 
+    $this->call->library('form_validation');
+}
+
 
     function test()
     {
@@ -143,7 +145,7 @@ class StudentsController extends Controller
         }
 
     }
-    
+
 
     function delete($id)
     {
