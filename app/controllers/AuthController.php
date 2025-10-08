@@ -7,7 +7,7 @@ class AuthController extends Controller {
     {
         parent::__construct();
         $this->call->model('StudentsModel');
-        $this->call->library('session'); // use framework session
+        $this->call->library('session');
     }
 
     public function signup()

@@ -9,6 +9,8 @@ class StudentsController extends Controller
         $this->call->database();
         $this->call->model('StudentsModel');
         $this->call->library('pagination');
+        // Ensure session is loaded if flash messages are used outside AuthController
+        $this->call->library('session'); 
     }
 
     function test()
@@ -20,6 +22,12 @@ class StudentsController extends Controller
 
     function get_all()
     {
+        // Check if user is logged in and is admin before proceeding
+        if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
+            redirect('login');
+            return;
+        }
+
         $search = isset($_GET['search']) ? $_GET['search'] : '';
         $page   = isset($_GET['page']) ? (int) $_GET['page'] : 1;
         $per_page = 5;
@@ -38,6 +46,12 @@ class StudentsController extends Controller
 
     function create()
 {
+    // Check if user is logged in and is admin before proceeding
+    if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
+        redirect('login');
+        return;
+    }
+
     if ($this->form_validation->submitted()) {
         $student_id = $this->io->post('student_id');
         $last_name  = $this->io->post('lastname');
@@ -49,7 +63,8 @@ class StudentsController extends Controller
 
         // ✅ Basic validation
         if ($password !== $confirm) {
-            $_SESSION['flash'] = ['type' => 'error', 'message' => 'Passwords do not match.'];
+            // FIX: Using session library consistently
+            $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Passwords do not match.']);
             redirect('create');
             return;
         }
@@ -69,10 +84,12 @@ class StudentsController extends Controller
 
         // ✅ Insert into DB
         if ($this->StudentsModel->insert($data)) {
-            $_SESSION['flash'] = ['type' => 'success', 'message' => 'User created successfully!'];
+            // FIX: Using session library consistently
+            $this->session->set_flashdata('flash', ['type' => 'success', 'message' => 'User created successfully!']);
             redirect('view');
         } else {
-            $_SESSION['flash'] = ['type' => 'error', 'message' => 'Failed to create user.'];
+            // FIX: Using session library consistently
+            $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Failed to create user.']);
             redirect('create');
         }
     } else {
@@ -80,10 +97,15 @@ class StudentsController extends Controller
     }
 }
 
-    
 
     function update($id)
 {
+    // Check if user is logged in and is admin before proceeding
+    if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
+        redirect('login');
+        return;
+    }
+    
     $user = $this->StudentsModel->find($id);
 
     if (!$user) {
@@ -111,7 +133,8 @@ class StudentsController extends Controller
         // ✅ Only update password if provided
         if (!empty($password)) {
             if ($password !== $confirm) {
-                $_SESSION['flash'] = ['type' => 'error', 'message' => 'Passwords do not match.'];
+                // FIX: Using session library consistently
+                $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Passwords do not match.']);
                 $this->call->view('update', ['user' => $user]);
                 return;
             }
@@ -120,10 +143,12 @@ class StudentsController extends Controller
 
         // ✅ Update user
         if ($this->StudentsModel->update($id, $data)) {
-            $_SESSION['flash'] = ['type' => 'success', 'message' => 'User updated successfully!'];
+            // FIX: Using session library consistently
+            $this->session->set_flashdata('flash', ['type' => 'success', 'message' => 'User updated successfully!']);
             redirect('view');
         } else {
-            $_SESSION['flash'] = ['type' => 'error', 'message' => 'Failed to update user.'];
+            // FIX: Using session library consistently
+            $this->session->set_flashdata('flash', ['type' => 'error', 'message' => 'Failed to update user.']);
             $this->call->view('update', ['user' => $user]);
         }
 
@@ -135,10 +160,16 @@ class StudentsController extends Controller
 
     function delete($id)
     {
+        // Check if user is logged in and is admin before proceeding
+        if (!$this->session->get_userdata('user') || $this->session->get_userdata('user')['user_type'] !== 'admin') {
+            redirect('login');
+            return;
+        }
+        
         if ($this->StudentsModel->delete($id)) {
             redirect('view');
         }
     }
 
 }
-?>
+
