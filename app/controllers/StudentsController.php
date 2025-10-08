@@ -56,7 +56,7 @@ class StudentsController extends Controller
         }
 
         if ($this->form_validation->submitted()) {
-            $student_id = $this->io->post('student_id');
+
             $last_name  = $this->io->post('lastname');
             $first_name = $this->io->post('firstname');
             $email      = $this->io->post('email');
@@ -73,7 +73,7 @@ class StudentsController extends Controller
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
             $data = [
-                'student_id' => $student_id,
+                
                 'last_name'  => $last_name,
                 'first_name' => $first_name,
                 'email'      => $email,
