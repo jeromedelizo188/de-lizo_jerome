@@ -88,4 +88,19 @@ $database['main'] = array(
     ],
 );
 
+
+/*$database['main'] = array(
+    'driver'    => 'mysql',
+    // Use getenv() to read variables set in the Render dashboard
+    'hostname'  => getenv("DB_HOST"),
+    'port'      => getenv("DB_PORT"),
+    'username'  => getenv("DB_USER"), // Note: The variable name here is DB_USER, not DB_USERNAME
+    'password'  => getenv("DB_PASS"),
+    'database'  => getenv("DB_NAME"),
+    'charset'   => 'utf8mb4',
+    'dbprefix'  => '',
+    // Optional for SQLite
+    'path'      => ''
+);
+*/
 ?>

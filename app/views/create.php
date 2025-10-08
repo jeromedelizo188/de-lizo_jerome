@@ -81,7 +81,7 @@
             CREATE USER ACCOUNT
         </h2>
         
-        <form action="<?=site_url('auth/createUser');?>" method="POST" class="space-y-6">
+        <form action="<?=site_url('create');?>" method="POST" class="space-y-6">
             <!-- Last Name -->
             <div>
                 <label for="lastname" class="block text-gray-600 font-medium mb-1 tracking-wide">LAST NAME</label>
