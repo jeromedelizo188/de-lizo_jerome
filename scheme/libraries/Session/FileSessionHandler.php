@@ -81,7 +81,7 @@ class FileSessionHandler extends Session implements SessionHandlerInterface {
         $this->save_path = $save_path;
         $this->file_path = $this->save_path.DIRECTORY_SEPARATOR.$session_name . '_';
          if ( !is_dir($this->save_path) ) {
-            mkdir($this->save_path, 0700, TRUE);
+            @mkdir($this->save_path, 0700, TRUE);
             }
      return true;
     }
