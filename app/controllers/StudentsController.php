@@ -23,7 +23,7 @@ class StudentsController extends Controller
 
     function get_all()
     {
-        // ✅ Check if user is logged in and admin
+        
         $user = $this->session->userdata('user');
         if (!$user || $user['user_type'] !== 'admin') {
             redirect('login');
@@ -48,7 +48,7 @@ class StudentsController extends Controller
 
     function create()
     {
-        // ✅ Check if user is logged in and admin
+
         $user = $this->session->userdata('user');
         if (!$user || $user['user_type'] !== 'admin') {
             redirect('login');
@@ -95,7 +95,7 @@ class StudentsController extends Controller
 
     function update($id)
     {
-        // ✅ Check if user is logged in and admin
+        
         $user = $this->session->userdata('user');
         if (!$user || $user['user_type'] !== 'admin') {
             redirect('login');
@@ -149,7 +149,7 @@ class StudentsController extends Controller
 
     function delete($id)
     {
-        // ✅ Check if user is logged in and admin
+
         $user = $this->session->userdata('user');
         if (!$user || $user['user_type'] !== 'admin') {
             redirect('login');

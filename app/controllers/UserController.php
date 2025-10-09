@@ -9,7 +9,7 @@ class UserController extends Controller {
         $this->call->model('StudentsModel');
         $this->call->library('session');
 
-        // ✅ Only allow logged-in users with "user" role
+
         if (!$this->session->userdata('user') || $this->session->userdata('user')['user_type'] !== 'user') {
             redirect('login');
         }
@@ -32,7 +32,7 @@ class UserController extends Controller {
             'total_pages' => ceil($result['total_rows'] / $per_page)
         ];
 
-        // ✅ Load the read-only view
+       
         $this->call->view('readonly-view', $data);
     }
 }

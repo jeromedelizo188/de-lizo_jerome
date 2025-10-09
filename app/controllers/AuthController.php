@@ -76,8 +76,7 @@ class AuthController extends Controller {
                 $this->call->view('login-page', ['error' => 'Incorrect password.', 'old_email' => $email]);
                 return;
             }
-
-            // ✅ Success: Use session library
+            
             $this->session->set_userdata('user', $user);
 
             if ($user['user_type'] === 'admin') {
