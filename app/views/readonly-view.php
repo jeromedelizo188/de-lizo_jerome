@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - Read Only</title>
+    <title>User Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -75,7 +75,7 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-center mb-10 gap-4">
             <h1 class="text-4xl font-semibold tracking-wider px-6 py-3 rounded-2xl soft-ui text-gray-700 text-shadow">
-                User Dashboard (Read-Only)
+                User Dashboard 
             </h1>
             <a href="<?= site_url('logout'); ?>" class="font-semibold text-lg px-8 py-4 rounded-xl soft-ui soft-ui-hover soft-ui-active text-gray-700">
                 Logout
